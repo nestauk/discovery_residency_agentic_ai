@@ -16,7 +16,7 @@ _judge_client = Client()
 def llm_judge(
     prompt: str,
     rubric: dict[str, str],
-    model: str = "azure:gpt-5-mini",
+    model: str = "openai:gpt-5-mini",
 ) -> dict[str, Any]:
     """
     Use an LLM to evaluate output against a rubric with multiple dimensions.

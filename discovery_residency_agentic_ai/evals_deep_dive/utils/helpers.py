@@ -27,22 +27,16 @@ def check_api_keys() -> str | None:
     else:
         print("✅ TAVILY_API_KEY found")
 
-    # Check LLM provider (Azure preferred, OpenAI as fallback)
-    azure_key = os.getenv("AZURE_API_KEY")
-    azure_url = os.getenv("AZURE_BASE_URL")
+    # Check LLM provider
     openai_key = os.getenv("OPENAI_API_KEY")
 
-    if azure_key and azure_url:
-        model = "azure:gpt-5-mini"
-        print(f"✅ AZURE keys found → using {model}")
-    elif openai_key:
+    if openai_key:
         model = "openai:gpt-5-mini"
         print(f"✅ OPENAI_API_KEY found → using {model}")
     else:
         issues.append("""
-❌ **No LLM provider configured**
-   → Option 1: Set AZURE_API_KEY + AZURE_BASE_URL (ask Simon)
-   → Option 2: Set OPENAI_API_KEY (get at https://platform.openai.com/api-keys)
+❌ **OPENAI_API_KEY** not found
+   → Get at https://platform.openai.com/api-keys
 """)
 
     if issues:

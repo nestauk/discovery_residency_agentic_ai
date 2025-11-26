@@ -60,7 +60,7 @@ def evaluate_X(output, criteria) -> tuple[bool, str]:
 
 ## LLM Configuration
 
-- Default model: `azure:gpt-5-mini`
+- Default model: `openai:gpt-5-mini`
 - Client: `aisuite.Client()` (initialized in setup cell)
 - Tool calling: `tool_choice="auto"`, `max_turns=N`
 
@@ -75,6 +75,5 @@ After modifying code, restart the kernel and run all cells in `workshop.ipynb` t
 ## Environment
 
 Requires `.env` with:
-- `AZURE_API_KEY`
-- `AZURE_BASE_URL`
+- `OPENAI_API_KEY`
 - `TAVILY_API_KEY`

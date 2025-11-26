@@ -143,47 +143,60 @@ def display_rubric_scores(result: dict[str, Any], title: str = "LLM Judge Evalua
 
 def display_test_results(results: list[dict], title: str = "Test Results"):
     """
-    Display test results in a styled card with pass/fail indicators.
+    Display test results in a compact table with pass/fail indicators.
 
     Args:
         results: List of dicts with 'question', 'expected', 'actual', 'passed' keys
         title: Title for the display card
     """
+    try:
+        from html import escape as _escape
+    except ImportError:
+        _escape = lambda x: x
+
     passed_count = sum(1 for r in results if r.get("passed"))
     total = len(results)
+    summary_color = "#22c55e" if passed_count == total else "#f59e0b" if passed_count > 0 else "#ef4444"
 
-    # Build rows HTML
+    # Build table rows
     rows_html = ""
-    for i, r in enumerate(results, 1):
+    for i, r in enumerate(results):
         passed = r.get("passed", False)
         icon = "✓" if passed else "✗"
-        color = "#22c55e" if passed else "#ef4444"
-        bg = "#f0fdf4" if passed else "#fef2f2"
+        icon_color = "#22c55e" if passed else "#ef4444"
+        bg = "#f9fafb" if i % 2 == 0 else "#ffffff"
+
+        question = r.get("question", "")
+        expected = str(r.get("expected", ""))
+        actual = str(r.get("actual") or "")
 
         rows_html += f"""
-        <div style="margin-bottom: 12px; padding: 10px; background: {bg}; border-radius: 8px; border-left: 4px solid {color};">
-            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 6px;">
-                <span style="font-weight: 600; color: #374151;">Q{i}: {r.get('question', '')}{'...' if len(r.get('question', '')) > 60 else ''}</span>
-                <span style="font-weight: 700; color: {color}; font-size: 18px;">{icon}</span>
-            </div>
-            <div style="font-size: 13px; color: #6b7280;">
-                <span>Expected: <code style="background: #e5e7eb; padding: 2px 6px; border-radius: 4px;">{r.get('expected', '')}</code></span>
-                <span style="margin-left: 16px;">Got: <code style="background: #e5e7eb; padding: 2px 6px; border-radius: 4px;">{str(r.get('actual') or '')[:40]}{'...' if len(str(r.get('actual') or '')) > 40 else ''}</code></span>
-            </div>
-        </div>
+        <tr style="background: {bg};">
+            <td style="padding: 8px 10px; border-bottom: 1px solid #e5e7eb;">{_escape(question)}</td>
+            <td style="padding: 8px 10px; border-bottom: 1px solid #e5e7eb; font-family: monospace; font-size: 12px;">{_escape(expected)}</td>
+            <td style="padding: 8px 10px; border-bottom: 1px solid #e5e7eb;">
+                <span style="color: {icon_color}; font-weight: 700; margin-right: 6px;">{icon}</span>
+                <span style="font-family: monospace; font-size: 12px;">{_escape(actual)}</span>
+            </td>
+        </tr>
         """
 
-    # Summary
-    pct = (passed_count / total * 100) if total > 0 else 0
-    summary_color = "#22c55e" if passed_count == total else "#f59e0b" if passed_count > 0 else "#ef4444"
-    summary_html = f"""
-    <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: 700; font-size: 16px;">Total</span>
-            <span style="font-weight: 700; font-size: 20px; color: {summary_color};">{passed_count}/{total} passed</span>
-        </div>
-    </div>
+    # Build full table
+    table_html = f"""
+    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+        <thead>
+            <tr style="background: #f3f4f6;">
+                <th style="padding: 8px 10px; text-align: left; font-weight: 600; border-bottom: 2px solid #e5e7eb;">Question</th>
+                <th style="padding: 8px 10px; text-align: left; font-weight: 600; border-bottom: 2px solid #e5e7eb;">Expected</th>
+                <th style="padding: 8px 10px; text-align: left; font-weight: 600; border-bottom: 2px solid #e5e7eb;">Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            {rows_html}
+        </tbody>
+    </table>
     """
 
-    full_html = rows_html + summary_html
-    print_html(full_html, title=title, is_html=True)
+    # Title with pass count
+    full_title = f'{title} <span style="float: right; color: {summary_color}; font-weight: 700;">{passed_count}/{total} passed</span>'
+    print_html(table_html, title=full_title, is_html=True)

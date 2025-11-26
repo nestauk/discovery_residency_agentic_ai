@@ -17,7 +17,7 @@ Evaluating AI agents is harder than evaluating traditional software - there's no
 
 ## Technologies
 
-`Python` `Azure OpenAI` `DuckDB` `Tavily Search` `aisuite` `JupyterLab`
+`Python` `OpenAI` `DuckDB` `Tavily Search` `aisuite` `JupyterLab`
 
 ---
 
@@ -30,7 +30,7 @@ This workshop teaches **component-level evaluation** of AI agents through two ex
 
 ## The Evaluation Framework
 
-Evaluations are organized along two axes:
+Evaluations are organised along two axes:
 
 |                | With Ground Truth | Without Ground Truth |
 |----------------|-------------------|----------------------|
@@ -70,8 +70,7 @@ cp .env.example .env
 ```
 
 Required keys:
-- `AZURE_API_KEY` - Azure OpenAI API key
-- `AZURE_BASE_URL` - Azure OpenAI endpoint
+- `OPENAI_API_KEY` - OpenAI API key
 - `TAVILY_API_KEY` - Tavily search API key
 
 ### 3. Run the workshop
